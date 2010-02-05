@@ -50,3 +50,29 @@ Configuration
 -------------
 The configuration of dwm is done by creating a custom config.h
 and (re)compiling the source code.
+
+About this fork on git-hub
+--------------------------
+Features have been added to dwm in form of patches on top of their hg-tip. So 
+it's hard to follow the development and get the new features in form of patches 
+over time. So I'm keeping a fork for myself. Feel free to use it if it eases
+your work.
+
+I've incorporated following patches:
+
+    * bottom stack
+    * fancycoloredbarclickable
+    * fibonacci
+    * movestack
+    * nametag
+    * nmaster
+
+There are some patches which I won't apply at all, so you're on your own! If they
+conflict with this branch, you better get ready to get your hands dirty.
+
+    * fancybar
+    * pertag
+    * statuscolors
+    * transparency
+    * urgentborder
+
