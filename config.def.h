@@ -25,11 +25,13 @@ static const Rule rules[] = {
 /* layout(s) */
 static const float mfact      = 0.55; /* factor of master area size [0.05..0.95] */
 static const Bool resizehints = True; /* True means respect size hints in tiled resizals */
+static const int nmaster = 2;         /* default number of clients in master area */
 
 /* addons: layouts */
 #include "layouts/bstack.c"        /* bottom stack (tiling) */
 #include "layouts/bstackhoriz.c"   /* bottom stack (tower like stack)  */
 #include "layouts/fibonacci.c"     /* spiral like arrangement */
+#include "layouts/nmaster-sym.c"   /* more than one client in the (tiling) master area */
 
 static const Layout layouts[] = {
 	/* symbol     arrange function */
@@ -40,6 +42,9 @@ static const Layout layouts[] = {
 	{ "===",      bstackhoriz },
 	{ "(@)",      spiral },
 	{ "[\\]",     dwindle },
+	{ "-|=",      ntile },
+	{ "-|-",      nbstack },
+
 };
 
 /* addons: other */
@@ -64,6 +69,9 @@ static Key keys[] = {
 	{ MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
 	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
+	{ MODKEY|ShiftMask,             XK_h,      incnmaster,     {.i = +1 } },
+	{ MODKEY|ShiftMask,             XK_l,      incnmaster,     {.i = -1 } },
+	{ MODKEY|ShiftMask,             XK_x,      setnmaster,     {.i = 2 } },
 	{ MODKEY|ShiftMask,             XK_j,      movestack,      {.i = +1 } },
 	{ MODKEY|ShiftMask,             XK_k,      movestack,      {.i = -1 } },
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
@@ -73,13 +81,15 @@ static Key keys[] = {
 	{ MODKEY,                       XK_Return, zoom,           {0} },
 	{ MODKEY,                       XK_Tab,    view,           {0} },
 	{ MODKEY|ShiftMask,             XK_c,      killclient,     {0} },
-	{ MODKEY|ShiftMask,             XK_t,      setlayout,      {.v = &layouts[0]} }, /*tile*/
-	{ MODKEY|ShiftMask,             XK_f,      setlayout,      {.v = &layouts[1]} }, /*float*/
-	{ MODKEY|ShiftMask,             XK_m,      setlayout,      {.v = &layouts[2]} }, /*monocle*/
-	{ MODKEY|ShiftMask,             XK_b,      setlayout,      {.v = &layouts[3]} }, /*bottomstack*/
-	{ MODKEY|ShiftMask,             XK_h,      setlayout,      {.v = &layouts[4]} }, /*bstackhoriz*/
-	{ MODKEY|ShiftMask,             XK_p,      setlayout,      {.v = &layouts[5]} }, /*spiral*/
-	{ MODKEY|ShiftMask,             XK_d,      setlayout,      {.v = &layouts[6]} }, /*dwindle*/
+	{ MODKEY|ShiftMask,             XK_t,      setlayout,      {.v = &layouts[0]} }, /* tile */
+	{ MODKEY|ShiftMask,             XK_f,      setlayout,      {.v = &layouts[1]} }, /* float */
+	{ MODKEY|ShiftMask,             XK_m,      setlayout,      {.v = &layouts[2]} }, /* monocle */
+	{ MODKEY|ShiftMask,             XK_b,      setlayout,      {.v = &layouts[3]} }, /* bottomstack */
+	{ MODKEY|ShiftMask,             XK_h,      setlayout,      {.v = &layouts[4]} }, /* bstackhoriz */
+	{ MODKEY|ShiftMask,             XK_p,      setlayout,      {.v = &layouts[5]} }, /* spiral */
+	{ MODKEY|ShiftMask,             XK_d,      setlayout,      {.v = &layouts[6]} }, /* dwindle */
+	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[7]} }, /* nbstack */
+	{ MODKEY,                       XK_b,      setlayout,      {.v = &layouts[8]} }, /* ntile */
 	{ MODKEY,                       XK_space,  setlayout,      {0} },
 	{ MODKEY|ShiftMask,             XK_space,  togglefloating, {0} },
 	{ MODKEY,                       XK_0,      view,           {.ui = ~0 } },
