@@ -61,7 +61,7 @@
 /* enums */
 enum { CurNormal, CurResize, CurMove, CurLast };        /* cursor */
 enum { ColBorder, ColFG, ColBG, ColLast };              /* color */
-enum { NetSupported, NetWMName, NetWMWindowOpacity, NetLast };              /* EWMH atoms */
+enum { NetSupported, NetWMName, NetLast };              /* EWMH atoms */
 enum { WMProtocols, WMDelete, WMState, WMLast };        /* default atoms */
 enum { ClkTagBar, ClkLtSymbol, ClkStatusText, ClkWinTitle,
        ClkClientWin, ClkRootWin, ClkLast };             /* clicks */
@@ -96,7 +96,6 @@ struct Client {
 	Client *snext;
 	Monitor *mon;
 	Window win;
-	double opacity;
 };
 
 typedef struct {
@@ -163,7 +162,6 @@ typedef struct {
 	unsigned int tags;
 	Bool isfloating;
 	int monitor;
-	double opacity;
 } Rule;
 
 enum { ColNorm, ColSel, ColUrg, ColErr, ColDelim, ColHot, ColMed, ColCool, NumColors };
@@ -202,7 +200,6 @@ static void drawcoloredtext(Monitor *m, char *text);
 static void enternotify(XEvent *e);
 static void expose(XEvent *e);
 static void focus(Client *c);
-static void window_opacity_set(Client *c, double opacity);
 static void focusonclick(const Arg *arg);
 static void focusin(XEvent *e);
 static void focusmon(const Arg *arg);
@@ -1029,21 +1026,8 @@ focus(Client *c) {
 	else
 		XSetInputFocus(dpy, root, RevertToPointerRoot, CurrentTime);
 	selmon->lastfocus[selmon->curtag]=selmon->sel;
-	if(selmon->sel) window_opacity_set(selmon->sel, shade);
-	if(c) window_opacity_set(c, c->opacity);
 	selmon->sel = c;
 	drawbars();
-}
-void
-window_opacity_set(Client *c, double opacity)
-{
-	if(opacity >= 0 && opacity <= 1)
-	{
-		unsigned long real_opacity[] = { opacity * 0xffffffff };
-		XChangeProperty(dpy, c->win, netatom[NetWMWindowOpacity], XA_CARDINAL, 32, PropModeReplace, (unsigned char *)real_opacity, 1);
-	}
-	else
-		XDeleteProperty(dpy, c->win, netatom[NetWMWindowOpacity]);
 }
 
 void
@@ -1365,7 +1349,6 @@ manage(Window w, XWindowAttributes *wa) {
 	updatetitle(c);
 	if(XGetTransientForHint(dpy, w, &trans))
 		t = wintoclient(trans);
-	c->opacity=-1;
 	if(t) {
 		c->mon = t->mon;
 		c->tags = t->tags;
@@ -1761,7 +1744,6 @@ setup(void) {
 	wmatom[WMState] = XInternAtom(dpy, "WM_STATE", False);
 	netatom[NetSupported] = XInternAtom(dpy, "_NET_SUPPORTED", False);
 	netatom[NetWMName] = XInternAtom(dpy, "_NET_WM_NAME", False);
-	netatom[NetWMWindowOpacity] = XInternAtom(dpy, "_NET_WM_WINDOW_OPACITY", False);
 	/* init cursors */
 	cursor[CurNormal] = XCreateFontCursor(dpy, XC_left_ptr);
 	cursor[CurResize] = XCreateFontCursor(dpy, XC_sizing);
